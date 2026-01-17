@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>420 Everywhere</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Shrikhand&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --acid-green: #ccff00;
+            --hot-pink: #ff0099;
+            --electric-blue: #00ffff;
+            --dark-bg: #050505;
+        }
+        body {
+            background-color: var(--dark-bg);
+            /* Gen Z Noise Grain */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"),
+            radial-gradient(circle at 50% 50%, #1a0b2e 0%, #000000 100%);
+            color: white;
+            font-family: 'Space Mono', monospace;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+
+        /* Typography */
+        h1, h2 {
+            font-family: 'Shrikhand', cursive;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Custom animations */
+        .glow-text {
+            text-shadow: 2px 2px 0px var(--hot-pink), -2px -2px 0px var(--electric-blue);
+        }
+
+        /* 80s/Gen-Z Card Style */
+        .retro-card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(204, 255, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 50; /* Ensure card is above confetti */
+        }
+        
+        /* Glitch Button */
+        .btn-trippy {
+            background: transparent;
+            border: 2px solid var(--acid-green);
+            color: var(--acid-green);
+            font-family: 'Space Mono', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            transition: 0.2s;
+            box-shadow: 4px 4px 0px var(--hot-pink);
+        }
+        .btn-trippy:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--hot-pink);
+            background: var(--acid-green);
+            color: black;
+        }
+        .btn-trippy:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px var(--hot-pink);
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #18181b; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--acid-green); border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: var(--hot-pink); }
+
+        /* Loading Dots */
+        .loading-dots::after {
+            content: ' .';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: ' .'; }
+            40% { content: ' ..'; }
+            60% { content: ' ...'; }
+            80%, 100% { content: ''; }
+        }
+
+        /* --- DISCO MODE ANIMATIONS --- */
+        @keyframes discoFlash {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: rgba(255, 255, 255, 0.8); }
+        }
+        
+        @keyframes rgbBorder {
+            0% { border-color: var(--acid-green); box-shadow: 0 0 20px var(--acid-green); }
+            33% { border-color: var(--hot-pink); box-shadow: 0 0 20px var(--hot-pink); }
+            66% { border-color: var(--electric-blue); box-shadow: 0 0 20px var(--electric-blue); }
+            100% { border-color: var(--acid-green); box-shadow: 0 0 20px var(--acid-green); }
+        }
+
+        /* Slow Heartbeat Animation for Cities */
+        @keyframes heartbeat {
+            0% { transform: scale(1); opacity: 0.7; box-shadow: 0 0 0 rgba(0,0,0,0); }
+            50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 15px var(--electric-blue); background-color: rgba(0, 255, 255, 0.2); }
+            100% { transform: scale(1); opacity: 0.7; box-shadow: 0 0 0 rgba(0,0,0,0); }
+        }
+
+        .city-heartbeat {
+            animation: heartbeat 2.5s infinite ease-in-out;
+        }
+
+        .disco-bg {
+            animation: rgbBg 2s infinite alternate;
+        }
+        @keyframes rgbBg {
+            0% { background-color: #1a0b2e; }
+            25% { background-color: #2e0b1a; }
+            50% { background-color: #0b2e1a; }
+            75% { background-color: #0b1a2e; }
+            100% { background-color: #1a0b2e; }
+        }
+
+        .corner-flash {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            z-index: 0;
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        .disco-active .corner-flash {
+            animation: flashPop 0.8s ease-out infinite;
+        }
+        
+        .c-tl { top: -50px; left: -50px; }
+        .c-tr { top: -50px; right: -50px; animation-delay: 0.2s !important; }
+        .c-bl { bottom: -50px; left: -50px; animation-delay: 0.4s !important; }
+        .c-br { bottom: -50px; right: -50px; animation-delay: 0.6s !important; }
+
+        @keyframes flashPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .disco-card {
+            animation: rgbBorder 1s infinite linear;
+        }
+
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-center relative transition-colors duration-1000">
+
+    <!-- Disco Corner Flashes -->
+    <div class="corner-flash c-tl"></div>
+    <div class="corner-flash c-tr"></div>
+    <div class="corner-flash c-bl"></div>
+    <div class="corner-flash c-br"></div>
+
+    <!-- Background Canvas for Smoke Effect -->
+    <canvas id="smokeCanvas" class="absolute top-0 left-0 w-full h-full z-0 opacity-40 pointer-events-none"></canvas>
+
+    <!-- Main Content -->
+    <main class="relative z-10 w-full max-w-md px-6 text-center">
+        
+        <!-- Header -->
+        <div class="mb-10 transform -rotate-2 hover:rotate-2 transition-transform duration-500">
+            <h1 class="text-5xl md:text-6xl text-white glow-text mb-2 tracking-wide">
+                Happy 420
+            </h1>
+            <p class="text-white/60 text-xs font-bold uppercase tracking-[0.3em] bg-black/30 inline-block px-3 py-1 rounded-full border border-white/10">
+                Global Vibe Synchronization
+            </p>
+        </div>
+
+        <!-- Initial State: Button -->
+        <div id="startView" class="transition-all duration-500 ease-out flex flex-col items-center">
+            <button onclick="checkGlobalStatus(false)" 
+                class="btn-trippy px-10 py-5 rounded-xl text-lg w-full max-w-[280px] flex items-center justify-center gap-3">
+                <i data-lucide="globe" class="w-5 h-5"></i>
+                IS IT TIME?
+            </button>
+            
+            <!-- Local Time Display -->
+            <div id="localTimeDisplay" class="mt-6 text-white/40 font-mono text-xs tracking-widest bg-black/20 px-4 py-2 rounded-lg backdrop-blur-sm">
+                LOADING TIME...
+            </div>
+            
+            <!-- Stats Display (Scoreboard) -->
+            <div id="statsDisplay" class="mt-4 hidden animate-pulse flex gap-2 justify-center">
+                <span id="litBadge" class="text-xs font-bold uppercase tracking-widest text-[var(--acid-green)] border border-[var(--acid-green)] px-3 py-1 rounded-full hidden">
+                    Lit: <span id="totalJoints" class="text-white">0</span> 🔥
+                </span>
+                <span id="missedBadge" class="text-xs font-bold uppercase tracking-widest text-[var(--hot-pink)] border border-[var(--hot-pink)] px-3 py-1 rounded-full hidden">
+                    Missed: <span id="totalMissed" class="text-white">0</span> 💨
+                </span>
+            </div>
+        </div>
+
+        <!-- Result State: Display -->
+        <div id="resultView" class="hidden flex-col items-center w-full relative z-50">
+            
+            <!-- Status Card -->
+            <div id="statusCard" class="retro-card p-6 w-full fade-in-up">
+                
+                <div id="iconContainer" class="mb-4 flex justify-center">
+                    <!-- Icon injected by JS -->
+                </div>
+
+                <h2 id="statusTitle" class="text-2xl mb-4 text-white"></h2>
+                
+                <!-- City List / Countdown Area -->
+                <div id="contentArea" class="py-4 border-t border-white/10 border-b min-h-[100px] flex flex-col justify-center relative">
+                    <p class="text-white/40 italic text-sm">Scanning the cosmos...</p>
+                </div>
+
+                <!-- SUCCESS ONLY: Joint Tracker Options -->
+                <div id="trackerSection" class="hidden mt-4 pt-2 border-b border-white/10 pb-4">
+                    <div class="grid grid-cols-2 gap-3">
+                         <button id="litBtn" onclick="trackAction('lit')" class="text-sm bg-[var(--acid-green)] text-black hover:bg-white transition-colors uppercase font-bold tracking-widest flex items-center justify-center gap-2 px-2 py-3 rounded-xl shadow-[0_0_15px_var(--acid-green)] hover:scale-105 active:scale-95 transform duration-100 cursor-pointer relative z-50">
+                            <span>🔥</span> Lit
+                        </button>
+                         <button id="missedBtn" onclick="trackAction('missed')" class="text-sm bg-transparent border-2 border-white/20 text-white/60 hover:text-white hover:border-white transition-colors uppercase font-bold tracking-widest flex items-center justify-center gap-2 px-2 py-3 rounded-xl hover:scale-105 active:scale-95 transform duration-100 cursor-pointer relative z-50">
+                            <span>💨</span> Missed
+                        </button>
+                    </div>
+                    <p id="trackMsg" class="text-[10px] text-white/50 mt-2 uppercase tracking-widest hidden text-center">Status Recorded.</p>
+                </div>
+
+                <!-- Gemini Feature: Munchie Matcher (Only visible on SUCCESS) -->
+                <div id="munchieSection" class="hidden mt-4 pt-4">
+                    <button onclick="getMunchies()" class="w-full text-xs text-[#ff9900] hover:text-white transition-colors uppercase font-bold tracking-widest flex items-center justify-center gap-2 border border-[#ff9900]/50 px-3 py-2 rounded-lg hover:bg-[#ff9900] mb-2 group cursor-pointer relative z-50">
+                        <span class="group-hover:animate-bounce">🍕</span> Munchie Matcher
+                    </button>
+                    <p id="munchieResult" class="text-xs text-[#ff9900]/80 italic mt-2"></p>
+                </div>
+
+                <!-- Gemini Feature: The Oracle (Only visible on WAITING/FAILURE) -->
+                <div id="oracleSection" class="hidden mt-4 pt-4 border-t border-white/10 flex flex-col items-center">
+                    <button onclick="getOracleContent()" class="w-full text-xs text-[var(--electric-blue)] hover:text-black transition-colors uppercase font-bold tracking-widest flex items-center justify-center gap-2 border border-[var(--electric-blue)] px-3 py-2 rounded-lg hover:bg-[var(--electric-blue)] mb-2 cursor-pointer relative z-50">
+                        <span>🔮</span> Consult the Oracle
+                    </button>
+                    <div class="w-full min-h-[1.5rem] bg-black/20 rounded p-2 mb-2">
+                         <p id="oracleResult" class="text-xs text-[var(--electric-blue)] italic opacity-90"></p>
+                    </div>
+                    <a id="oracleReadMore" href="#" target="_blank" class="hidden text-[10px] text-[var(--hot-pink)] hover:text-white underline uppercase tracking-widest font-bold relative z-50">
+                        Read More ->
+                    </a>
+                </div>
+
+                <!-- Footer / Action -->
+                <div class="mt-6">
+                    <button onclick="resetApp()" class="text-xs text-white/70 hover:text-[var(--acid-green)] transition-colors uppercase font-bold tracking-widest flex items-center justify-center gap-2 mx-auto cursor-pointer relative z-50">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
+                    </button>
+                </div>
+            </div>
+
+            <!-- Fun Fact / Footer -->
+            <p id="subText" class="mt-6 text-white/30 text-[10px] uppercase tracking-widest fade-in-up" style="animation-delay: 0.2s;"></p>
+
+        </div>
+    </main>
+
+    <!-- Simulation Toggle for Devs -->
+    <div onclick="checkGlobalStatus(true)" class="fixed bottom-4 right-4 text-[10px] text-white/30 hover:text-[var(--acid-green)] cursor-pointer font-sans select-none z-50 transition-colors border border-white/10 px-2 py-1 rounded hover:bg-white/10">
+        🔴 TRIGGER 4:20 (TEST)
+    </div>
+
+    <script>
+        // --- 1. Canvas Smoke Effect ---
+        const canvas = document.getElementById('smokeCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 200;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = Math.random() * -1 - 0.5;
+                this.size = Math.random() * 40 + 10;
+                this.alpha = Math.random() * 0.15;
+                this.life = 0;
+                this.maxLife = Math.random() * 300 + 200;
+                const colors = ['#ccff00', '#ff0099', '#00ffff'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life++;
+                this.x += Math.sin(this.life * 0.02) * 0.4;
+                if (this.life > this.maxLife || this.y < -50) this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 50;
+                this.life = 0;
+                this.alpha = Math.random() * 0.15;
+                this.vy = Math.random() * -1 - 0.5;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for(let i = 0; i < 30; i++) particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // --- 2. Logic ---
+        
+        lucide.createIcons();
+
+        let countdownTimer = null;
+        let localClockInterval = null;
+        let currentWinningCity = null; 
+        let upcomingCities = []; 
+        let oracleClickCount = 0;
+
+        // Initialize Tracker Stats
+        function updateStatsDisplay() {
+            const lit = parseInt(localStorage.getItem('jointCount') || '0');
+            const missed = parseInt(localStorage.getItem('missedCount') || '0');
+            
+            const container = document.getElementById('statsDisplay');
+            const litBadge = document.getElementById('litBadge');
+            const missedBadge = document.getElementById('missedBadge');
+            
+            if (lit > 0 || missed > 0) {
+                container.classList.remove('hidden');
+            }
+            
+            if (lit > 0) {
+                litBadge.classList.remove('hidden');
+                document.getElementById('totalJoints').innerText = lit;
+            }
+            
+            if (missed > 0) {
+                missedBadge.classList.remove('hidden');
+                document.getElementById('totalMissed').innerText = missed;
+            }
+        }
+        updateStatsDisplay();
+
+        function trackAction(type) {
+            let litCount = parseInt(localStorage.getItem('jointCount') || '0');
+            let missedCount = parseInt(localStorage.getItem('missedCount') || '0');
+            
+            if (type === 'lit') {
+                litCount++;
+                localStorage.setItem('jointCount', litCount);
+            } else {
+                missedCount++;
+                localStorage.setItem('missedCount', missedCount);
+            }
+            
+            // Visual feedback
+            const litBtn = document.getElementById('litBtn');
+            const missedBtn = document.getElementById('missedBtn');
+            
+            if (type === 'lit') {
+                litBtn.innerHTML = "<span>🔥</span> LIT!";
+                litBtn.classList.add('bg-white', 'text-black');
+            } else {
+                missedBtn.innerHTML = "<span>💨</span> MISSED";
+                missedBtn.classList.add('bg-white/20', 'text-white');
+            }
+            
+            litBtn.disabled = true;
+            missedBtn.disabled = true;
+            
+            document.getElementById('trackMsg').classList.remove('hidden');
+            document.getElementById('trackMsg').innerText = `Score: ${litCount} | Misses: ${missedCount}`;
+            
+            updateStatsDisplay();
+        }
+
+        function stopCountdown() {
+            if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+        }
+
+        function updateLocalClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const display = document.getElementById('localTimeDisplay');
+            if (display) display.innerText = `YOUR TIME: ${timeString}`;
+        }
+
+        function startLocalClock() {
+            updateLocalClock();
+            if (localClockInterval) clearInterval(localClockInterval);
+            localClockInterval = setInterval(updateLocalClock, 1000);
+        }
+
+        function stopLocalClock() {
+            if (localClockInterval) { clearInterval(localClockInterval); localClockInterval = null; }
+        }
+
+        startLocalClock();
+
+        function resetApp() {
+            stopCountdown();
+            // Remove Disco FX
+            document.body.classList.remove('disco-active', 'disco-bg');
+            document.getElementById('statusCard').classList.remove('disco-card');
+
+            document.getElementById('resultView').classList.add('hidden');
+            document.getElementById('resultView').classList.remove('flex');
+            document.getElementById('startView').classList.remove('hidden');
+            
+            // Reset UI
+            document.getElementById('munchieResult').innerText = '';
+            document.getElementById('munchieSection').classList.add('hidden');
+            document.getElementById('oracleSection').classList.add('hidden');
+            document.getElementById('oracleResult').innerText = '';
+            document.getElementById('oracleReadMore').classList.add('hidden');
+            document.getElementById('trackerSection').classList.add('hidden');
+            
+            // Reset Button State
+            const litBtn = document.getElementById('litBtn');
+            const missedBtn = document.getElementById('missedBtn');
+            litBtn.innerHTML = "<span>🔥</span> Lit";
+            litBtn.classList.remove('bg-white', 'text-black');
+            litBtn.classList.add('bg-[var(--acid-green)]');
+            litBtn.disabled = false;
+            missedBtn.innerHTML = "<span>💨</span> Missed";
+            missedBtn.classList.remove('bg-white/20', 'text-white');
+            missedBtn.classList.add('bg-transparent');
+            missedBtn.disabled = false;
+            document.getElementById('trackMsg').classList.add('hidden');
+            
+            oracleClickCount = 0;
+            updateStatsDisplay();
+            startLocalClock();
+        }
+
+        function formatZoneName(zone) {
+            let name = zone.split('/').pop().replace(/_/g, ' ');
+            return name;
+        }
+
+        // CONFETTI CANNON
+        function fireConfetti() {
+            const duration = 5000;
+            const end = Date.now() + duration;
+
+            try {
+                if (typeof confetti === 'function') {
+                    (function frame() {
+                        confetti({
+                            particleCount: 5,
+                            angle: 60,
+                            spread: 55,
+                            origin: { x: 0 },
+                            colors: ['#ccff00', '#ff0099', '#00ffff'],
+                            zIndex: 5 // BEHIND UI (z-50)
+                        });
+                        confetti({
+                            particleCount: 5,
+                            angle: 120,
+                            spread: 55,
+                            origin: { x: 1 },
+                            colors: ['#ccff00', '#ff0099', '#00ffff'],
+                            zIndex: 5 // BEHIND UI (z-50)
+                        });
+                    
+                        if (Date.now() < end) {
+                            requestAnimationFrame(frame);
+                        }
+                    }());
+                }
+            } catch (e) {
+                console.warn("Confetti failed to fire", e);
+            }
+        }
+
+        function checkGlobalStatus(isSim) {
+            stopCountdown();
+            stopLocalClock();
+            const startView = document.getElementById('startView');
+            const resultView = document.getElementById('resultView');
+            const statusTitle = document.getElementById('statusTitle');
+            const contentArea = document.getElementById('contentArea');
+            const iconContainer = document.getElementById('iconContainer');
+            const subText = document.getElementById('subText');
+            const munchieSection = document.getElementById('munchieSection');
+            const oracleSection = document.getElementById('oracleSection');
+            const trackerSection = document.getElementById('trackerSection');
+            const statusCard = document.getElementById('statusCard');
+
+            startView.classList.add('hidden');
+            resultView.classList.remove('hidden');
+            resultView.classList.add('flex');
+
+            const allZones = Intl.supportedValuesOf('timeZone');
+            const now = new Date();
+            let winners = new Set();
+            upcomingCities = []; 
+            
+            allZones.forEach(zone => {
+                try {
+                    const localTime = new Date(now.toLocaleString("en-US", {timeZone: zone}));
+                    const h = localTime.getHours();
+                    const m = localTime.getMinutes();
+                    const isTargetTime = m === 20 && (h === 4 || h === 16);
+                    if (isSim || isTargetTime) winners.add(formatZoneName(zone));
+                } catch (e) { console.warn("Skipping invalid timezone:", zone); }
+            });
+
+            contentArea.innerHTML = '';
+
+            if (winners.size > 0) {
+                // SUCCESS STATE
+                // ACTIVATE DISCO MODE
+                document.body.classList.add('disco-active', 'disco-bg');
+                statusCard.classList.add('disco-card');
+                fireConfetti(); 
+
+                statusTitle.innerText = "IT IS 4:20 RIGHT NOW";
+                statusTitle.className = "text-2xl mb-4 text-[var(--acid-green)] glow-text font-black";
+                iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-16 h-16 text-[var(--acid-green)] drop-shadow-[0_0_10px_rgba(204,255,0,0.5)]"></i>`;
+                
+                const list = document.createElement('div');
+                list.className = "max-h-[200px] overflow-y-auto custom-scroll w-full text-left px-4";
+                
+                let sortedWinners = Array.from(winners).sort();
+                
+                // SIMULATION CAP: Prevent rendering 400+ items which crashes UI
+                if (isSim && sortedWinners.length > 50) {
+                    sortedWinners = sortedWinners.slice(0, 50);
+                }
+
+                currentWinningCity = sortedWinners[0];
+                
+                // Show Sections
+                munchieSection.classList.remove('hidden'); 
+                oracleSection.classList.add('hidden'); 
+                trackerSection.classList.remove('hidden'); // Show Tracker
+
+                sortedWinners.forEach(city => {
+                    const item = document.createElement('a');
+                    item.href = `https://www.google.com/maps?q=${encodeURIComponent(city)}`;
+                    item.target = "_blank";
+                    item.className = "block text-lg md:text-xl font-bold text-white py-2 border-b border-white/10 last:border-0 hover:text-[var(--acid-green)] transition-colors cursor-pointer no-underline";
+                    item.innerText = city;
+                    list.appendChild(item);
+                });
+                
+                // Add note if truncated
+                if (isSim && winners.size > 50) {
+                    const more = document.createElement('div');
+                    more.className = "text-center text-white/40 text-xs mt-2 italic";
+                    more.innerText = `...and ${winners.size - 50} other zones!`;
+                    list.appendChild(more);
+                }
+                
+                contentArea.appendChild(list);
+                subText.innerText = "Vibes secured. Proceed to chill.";
+                particles.forEach(p => { p.vy -= 1; p.alpha = 0.3; });
+
+            } else {
+                // FAILURE STATE (WAITING)
+                statusTitle.innerText = "NOT 4:20 ANYWHERE";
+                statusTitle.className = "text-xl mb-4 text-white/50";
+                iconContainer.innerHTML = `<i data-lucide="clock" class="w-12 h-12 text-white/30"></i>`;
+                munchieSection.classList.add('hidden'); 
+                oracleSection.classList.remove('hidden'); 
+                trackerSection.classList.add('hidden');
+                
+                const nextTarget = new Date(now);
+                nextTarget.setMinutes(20, 0, 0);
+                if (nextTarget <= now) nextTarget.setHours(nextTarget.getHours() + 1);
+
+                allZones.forEach(zone => {
+                    try {
+                        const futureLocal = new Date(nextTarget.toLocaleString("en-US", {timeZone: zone}));
+                        const h = futureLocal.getHours();
+                        if (h === 4 || h === 16) upcomingCities.push(formatZoneName(zone));
+                    } catch (e) {}
+                });
+                upcomingCities = [...new Set(upcomingCities)].sort();
+                
+                const counterDiv = document.createElement('div');
+                counterDiv.className = "text-center";
+                
+                const bigNumber = document.createElement('div');
+                bigNumber.className = "text-5xl font-bold text-[var(--acid-green)] mb-2 font-mono tabular-nums drop-shadow-[0_0_5px_var(--acid-green)]"; 
+                bigNumber.innerText = "--:--";
+                
+                const label = document.createElement('div');
+                label.className = "text-white/40 text-xs tracking-widest";
+                label.innerText = "COUNTDOWN TO NEXT ROTATION";
+                
+                counterDiv.appendChild(bigNumber);
+                counterDiv.appendChild(label);
+
+                if (upcomingCities.length > 0) {
+                    const nextUpDiv = document.createElement('div');
+                    nextUpDiv.className = "mt-4 text-white/60 text-xs font-bold uppercase tracking-widest border-t border-white/10 pt-3 flex flex-wrap gap-2 justify-center";
+                    
+                    const labelSpan = document.createElement('div');
+                    labelSpan.className = "w-full mb-1 flex flex-col items-center";
+                    
+                    const mainLabel = document.createElement('span');
+                    mainLabel.innerText = "NEXT ROTATION: PRE-ROLL ALERT";
+                    mainLabel.className = "text-[var(--hot-pink)] text-sm animate-pulse";
+                    
+                    const subLabel = document.createElement('span');
+                    subLabel.innerText = "Prepare to light up with:";
+                    subLabel.className = "text-[10px] opacity-70 font-mono lowercase tracking-normal mb-2";
+                    
+                    labelSpan.appendChild(mainLabel);
+                    labelSpan.appendChild(subLabel);
+                    nextUpDiv.appendChild(labelSpan);
+
+                    const displayCities = upcomingCities.slice(0, 5); 
+                    displayCities.forEach((city, index) => {
+                        const link = document.createElement('a');
+                        link.href = `https://www.google.com/maps?q=${encodeURIComponent(city)}`;
+                        link.target = "_blank";
+                        link.innerText = city;
+                        // Added city-heartbeat animation with staggered delay
+                        link.className = "city-heartbeat bg-white/10 hover:bg-[var(--electric-blue)] hover:text-black px-2 py-1 rounded text-[10px] transition-colors cursor-pointer";
+                        link.style.animationDelay = `${index * 0.3}s`; // STAGGERED DELAY
+                        nextUpDiv.appendChild(link);
+                    });
+
+                    if (upcomingCities.length > 5) {
+                        const more = document.createElement('span');
+                        more.innerText = `+${upcomingCities.length - 5} others`;
+                        more.className = "text-[10px] opacity-50 self-center";
+                        nextUpDiv.appendChild(more);
+                    }
+                    
+                    counterDiv.appendChild(nextUpDiv);
+                }
+
+                contentArea.appendChild(counterDiv);
+                subText.innerText = "Patience is a virtue (mostly).";
+                startCountdown(nextTarget, bigNumber);
+            }
+            lucide.createIcons();
+        }
+
+        function startCountdown(target, element) {
+            function update() {
+                const now = new Date();
+                const diff = target - now;
+                if (diff <= 0) {
+                    stopCountdown();
+                    checkGlobalStatus(false); 
+                    return;
+                }
+                const m = Math.floor(diff / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+                const mStr = m.toString().padStart(2, '0');
+                const sStr = s.toString().padStart(2, '0');
+                element.innerText = `${mStr}:${sStr}`;
+            }
+            update();
+            countdownTimer = setInterval(update, 1000);
+        }
+
+        // --- 3. Gemini Integration ---
+        const apiKey = "AIzaSyBc1OAyo17z_g6SL-ID2j9TTJXZVotHRYw"; 
+
+        async function callGemini(prompt) {
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            temperature: 1.3, 
+                            maxOutputTokens: 100
+                        }
+                    })
+                });
+                
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                const data = await response.json();
+                
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (text) {
+                    return text.trim();
+                } else {
+                    return "The vibes are off... try again.";
+                }
+            } catch (error) {
+                console.error("Gemini Error:", error);
+                return "The stars are cloudy right now... try again later.";
+            }
+        }
+
+        async function getMunchies() {
+            if (!currentWinningCity) return;
+            const display = document.getElementById('munchieResult');
+            display.className = "text-xs text-[#ff9900]/80 italic mt-2 loading-dots";
+            display.innerText = "Scanning local street food";
+            
+            const prompt = `It is currently 4:20 in ${currentWinningCity}. Suggest one specific, popular local street food or snack from there to satisfy the munchies. Keep it very short (1 sentence). No markdown.`;
+            const snack = await callGemini(prompt);
+            
+            display.classList.remove('loading-dots');
+            display.innerText = snack;
+        }
+
+        async function getOracleContent() {
+            oracleClickCount++; 
+            
+            const display = document.getElementById('oracleResult');
+            const readMore = document.getElementById('oracleReadMore');
+            
+            display.classList.remove('hidden');
+            display.className = "text-xs text-[var(--electric-blue)] italic opacity-90 loading-dots";
+            display.innerText = "Consulting the digital cosmos";
+            readMore.classList.add('hidden'); 
+            
+            let finalPrompt = "";
+            let city = "the world";
+            let useCityLogic = true;
+
+            if (oracleClickCount >= 3) {
+                useCityLogic = false;
+                const funnyPrompts = [
+                    "Tell a random, funny one-liner joke about time, clocks, or patience.",
+                    "Give me a weird but funny existential thought that a 'stoner' might have.",
+                    "What is a funny reason why time moves slowly when you are waiting?",
+                    "Generate a random, uplifting, funny compliment for someone waiting.",
+                    "Tell me a very short, absurd fact about the universe that is funny."
+                ];
+                finalPrompt = funnyPrompts[Math.floor(Math.random() * funnyPrompts.length)];
+            } else {
+                city = upcomingCities.length > 0 
+                    ? upcomingCities[Math.floor(Math.random() * upcomingCities.length)] 
+                    : "the world";
+
+                const contentTypes = [
+                    `Tell me a short, uplifting news headline or positive recent event related to ${city}.`,
+                    `Tell me a funny cultural fact or joke about ${city}.`,
+                    `Give me a chill, uplifting fact about ${city}.`
+                ];
+                const selectedPrompt = contentTypes[Math.floor(Math.random() * contentTypes.length)];
+                finalPrompt = `${selectedPrompt} Keep it short (under 25 words). No markdown. Plain text only.`;
+            }
+
+            const text = await callGemini(finalPrompt);
+            
+            display.classList.remove('loading-dots');
+            display.innerText = text;
+            
+            const isError = text.includes("vibes are off") || text.includes("cloudy right now");
+            
+            if (!isError && useCityLogic && city !== "the world") {
+                const query = `${text} ${city}`;
+                readMore.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                readMore.classList.remove('hidden');
+            } else {
+                readMore.classList.add('hidden');
+            }
+        }
+
+    </script>
+</body>
+</html>
